@@ -1,2 +1,2 @@
-import {StateStore} from "./StateStore"
-export {StateStore};
+import {StateStore, StateChangeEvent} from "./StateStore"
+export {StateStore, StateChangeEvent};

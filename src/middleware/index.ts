@@ -1,2 +1,2 @@
-import {Middleware} from "./Middleware";
-export {Middleware};
+import {Middleware, MiddlewareCallback} from "./Middleware";
+export {Middleware, MiddlewareCallback};
