@@ -1,54 +1,55 @@
-interface ChangeHandlerInterface{
+interface ChangeHandlerInterface {
     (newState: any, preState: any): void;
 }
 
-interface MiddlewareInterface<StateType>{
-    (next: (state:StateType)=> StateType): any;
-}
 
-
-class StateStore<StateType>{
+class StateStore<StateType> {
     handlerList: ChangeHandlerInterface[];
 
     state: StateType;
 
     constructor(initState: StateType) {
         this.handlerList = [];
+
         this.state = initState;
     }
 
-    onChange(handler: ChangeHandlerInterface, selector?: Function){
-        let warppedHandler: ChangeHandlerInterface;
-        if(selector){
-            warppedHandler = (newState: any, preState: any)=>{
+    onChange(handler: ChangeHandlerInterface, selector?: Function) {
+        let wrappedHandler: ChangeHandlerInterface;
+        if (selector) {
+            wrappedHandler = (newState: any, preState: any) => {
                 const newTarget = selector(newState);
                 const preTarget = selector(preState);
-                if(newTarget !== preTarget){
+                if (newTarget !== preTarget) {
                     handler(newTarget, preTarget);
                 }
             }
         } else {
-            warppedHandler = handler;
+            wrappedHandler = handler;
         }
 
-        this.handlerList.push(warppedHandler);
+        this.handlerList.push(wrappedHandler);
     }
+
 
     // TODO: mixin
 
-    
-    setState(state: StateType): any{
+    setState(state: StateType): StateType {
         const preState = this.state;
         const newState = state;
         this.state = newState;
 
-        // TODO: middleware
-
         const handlerList = this.handlerList;
-        for(let i=0; i<handlerList.length; i++){
+        for (let i = 0; i < handlerList.length; i++) {
             const nowHandler = handlerList[i];
             nowHandler(newState, preState);
         }
+        return newState;
+    }
+
+
+    getState() : StateType{
+        return this.state;
     }
 }
 
