@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --env.dev",
     "build": "webpack",
-    "test": "mocha -r ts-node/register ./test/*.ts"
+    "test": "mocha"
   },
   "author": {
     "name": "getElementByName",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/chai": "^4.0.2",
     "@types/mocha": "^2.2.41",
+    "@types/es6-promise": "0.0.32",
     "awesome-typescript-loader": "^3.2.1",
     "chai": "^4.1.1",
     "html-webpack-plugin": "^2.29.0",

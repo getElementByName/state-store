@@ -1,28 +1,25 @@
 import {compose} from "./util";
 
-interface MiddlewareCallback {
-    (next: Function): (...args: any[]) => any;
+interface MiddlewareCallback<ExecuteFunctionInterface extends Function>{
+    (next: Function): ExecuteFunctionInterface;
 }
 
+class Middleware <ExecuteFunctionInterface extends Function>{
+    executor: ExecuteFunctionInterface;
 
-class Middleware {
-    executor: Function;
-    middlewareList: Function[];
-
-    constructor(executor: Function) {
-        this.executor = executor;
-        this.middlewareList = [];
+    constructor() {
+        (<any>this.executor) = () => {};
     }
 
-    use(middlewareCallback: MiddlewareCallback) {
-        this.middlewareList.push(middlewareCallback);
+    use(middlewareCallback: MiddlewareCallback<ExecuteFunctionInterface>) {
+        this.executor = ((stack) => {
+            return middlewareCallback(stack);
+        })(this.executor);
     }
 
+    // TODO: ExecuteFunctionInterface로 signature 맞추기
     go(...args: any[]) {
-        // TODO: use에서 합성하고 실행은 바로
-        return compose(...this.middlewareList)((...args: any[]) => {
-            return this.executor(...args);  // bind
-        })(...args);
+        return (<any>this.executor)(...args);
     }
 }
 

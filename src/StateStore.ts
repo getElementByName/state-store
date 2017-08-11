@@ -1,19 +1,20 @@
 import {Middleware, MiddlewareCallback} from "./middleware";
 
-interface ChangeHandlerInterface {
-    (newState: any, preState: any): void;
+interface ChangeHandlerInterface<StateType> {
+    (event: StateChangeEvent<StateType>, options?: any): void;
 }
 
+class StateChangeEvent<StateType> {
+    newTarget?: any;
+    preTarget?: any;
 
-class StateChangeEvent<StateType>{
-    constructor(public newState: StateType, public preState: StateType){
-
+    constructor(public newState: StateType, public preState: StateType) {
     }
 }
 
 class StateStore<StateType> {
-    private handlerList: ChangeHandlerInterface[];
-    private middleware: Middleware;
+    private handlerList: ChangeHandlerInterface<StateType>[];
+    private middleware: Middleware<ChangeHandlerInterface<StateType>>;
 
     private state: StateType;
 
@@ -21,19 +22,23 @@ class StateStore<StateType> {
         this.handlerList = [];
 
         this.state = initState;
-        this.middleware = new Middleware((event: StateChangeEvent<StateType>, options?:any) => {
+        this.middleware = new Middleware();
+        this.middleware.use((next) => (event: StateChangeEvent<StateType>, options?: any) => {
             return this.onChange(event, options);
         });
     }
 
-    addChangeEvent(handler: ChangeHandlerInterface, selector?: Function) {
-        let wrappedHandler: ChangeHandlerInterface;
+    addChangeEvent(handler: ChangeHandlerInterface<StateType>, selector?: Function) {
+        let wrappedHandler: ChangeHandlerInterface<StateType>;
         if (selector) {
-            wrappedHandler = (event: StateChangeEvent<StateType>, options?:any) => {
+            wrappedHandler = (event: StateChangeEvent<StateType>, options?: any) => {
                 const newTarget = selector(event.newState);
                 const preTarget = selector(event.preState);
                 if (newTarget !== preTarget) {
-                    handler(newTarget, preTarget);
+                    const selectedEvent = new StateChangeEvent(event.newState, event.preState);
+                    selectedEvent.newTarget = newTarget;
+                    selectedEvent.preTarget = preTarget;
+                    handler(selectedEvent, options);
                 }
             }
         } else {
@@ -44,7 +49,7 @@ class StateStore<StateType> {
     }
 
     // TODO: mixin
-    setState(state: StateType, options?: any): StateType {
+    setState(state: StateType, options?: any): StateChangeEvent<StateType> {
         const preState = this.state;
         const newState = state;
 
@@ -52,7 +57,7 @@ class StateStore<StateType> {
         return this.middleware.go(newEvent, options);
     }
 
-    private onChange(event: StateChangeEvent<StateType>, options?:any) {
+    private onChange(event: StateChangeEvent<StateType>, options?: any) {
         this.state = event.newState;
 
         const handlerList = this.handlerList;
@@ -68,7 +73,7 @@ class StateStore<StateType> {
         return this.state;
     }
 
-    use(middlewareCallback: MiddlewareCallback){
+    use(middlewareCallback: MiddlewareCallback<ChangeHandlerInterface<StateType>>) {
         this.middleware.use(middlewareCallback);
     }
 }

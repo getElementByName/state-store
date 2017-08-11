@@ -24,7 +24,9 @@ function addChangeValueEventHandler(inputElement: HTMLInputElement) {
 addChangeValueEventHandler(inputElement1);
 addChangeValueEventHandler(inputElement2);
 
-stateStore.addChangeEvent((newText: string) => {
+stateStore.addChangeEvent((event) => {
+    const newText = event.newTarget;
+
     inputElement1.value = newText;
     inputElement2.value = newText;
     textElement.innerHTML = newText;

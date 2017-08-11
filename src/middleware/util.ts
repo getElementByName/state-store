@@ -1,8 +1,8 @@
-function reduceRight(list: any[], callback: Function, initialValue?: any) {
+function reduce(list: any[], callback: Function, initialValue?: any) {
     const length = list.length;
 
     let result = initialValue;
-    for (let i = length - 1; i >= 0; i--) {
+    for (let i = 0; i < length; i++) {
         result = callback(result, list[i]);
     }
     return result;
@@ -27,9 +27,9 @@ export function compose(...funcs: Function[]) {
         return funcs[0];
     }
 
-    const last = funcs[funcs.length - 1];
-    const rest = funcs.slice(0, -1);
+    const first = funcs[0];
+    const rest = funcs.slice(1);
     return (...args: any[]) => {
-        return reduceRight(rest, (composedReturn: any, f: Function) => f(composedReturn), last(...args));
+        return reduce(rest, (composedReturn: any, f: Function) => f(composedReturn), first(...args));
     }
 }
