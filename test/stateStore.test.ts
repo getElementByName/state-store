@@ -22,8 +22,8 @@ describe('# StateStore', () => {
         return new Promise((resolve, reject) => {
             stateStore.addChangeEvent((event, options) => {
 
-                expect(event.preState).to.equal(1);
-                expect(event.newState).to.equal(2);
+                expect(event.preTarget).to.equal(1);
+                expect(event.newTarget).to.equal(2);
                 resolve();
 
             }, (state: any) => {
