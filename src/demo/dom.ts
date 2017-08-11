@@ -34,9 +34,10 @@ stateStore.addChangeEvent((newText: string) => {
 
 
 const loggerMiddleware = (next: Function) => (event: StateChangeEvent<StateType>, options?: any) => {
+    console.log("[BEFORE LOGGER]", stateStore.getState());
     next(event, options);
-    console.log("[LOGGER]", event);
-    console.log("[LOGGER]", options);
+    console.log("[LOGGER]", stateStore.getState());
+    console.log("[LOGGER - options]", options);
 };
 
 const persist = new eg.Persist("input_text");
@@ -51,4 +52,4 @@ stateStore.use(loggerMiddleware);
 stateStore.use(persistMiddleware);
 
 const persistState: StateType = <StateType>persist.get("");
-persistState && stateStore.setState(persistState);
+persistState && stateStore.setState(persistState, {src: persist});

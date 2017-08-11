@@ -47,13 +47,14 @@ class StateStore<StateType> {
     setState(state: StateType, options?: any): StateType {
         const preState = this.state;
         const newState = state;
-        this.state = newState;
 
         const newEvent = new StateChangeEvent<StateType>(newState, preState);
         return this.middleware.go(newEvent, options);
     }
 
     private onChange(event: StateChangeEvent<StateType>, options?:any) {
+        this.state = event.newState;
+
         const handlerList = this.handlerList;
         for (let i = 0; i < handlerList.length; i++) {
             const nowHandler = handlerList[i];

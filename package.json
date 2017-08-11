@@ -5,7 +5,8 @@
   "main": "dist/StateStore.js",
   "scripts": {
     "start": "webpack-dev-server --env.dev",
-    "build": "webpack"
+    "build": "webpack",
+    "test": "mocha -r ts-node/register ./test/*.ts"
   },
   "author": {
     "name": "getElementByName",
@@ -18,8 +19,14 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.0.2",
+    "@types/mocha": "^2.2.41",
     "awesome-typescript-loader": "^3.2.1",
+    "chai": "^4.1.1",
     "html-webpack-plugin": "^2.29.0",
+    "mocha": "^3.5.0",
+    "ts-loader": "^2.3.2",
+    "ts-node": "^3.3.0",
     "typescript": "^2.4.1",
     "webpack": "^3.2.0",
     "webpack-dev-server": "^2.5.1",
